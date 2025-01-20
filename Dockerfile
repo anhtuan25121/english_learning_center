@@ -35,3 +35,6 @@ EXPOSE 8080
 
 # Chạy ứng dụng
 ENTRYPOINT ["java", "-jar", "app.jar"]
+
+RUN mvn validate && mvn clean package -DskipTests
+
