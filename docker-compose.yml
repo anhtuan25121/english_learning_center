@@ -3,37 +3,32 @@ version: '3.8'
 services:
   mysql:
     image: mysql:8.0
-    container_name: mysql_container
-    ports:
-      - "3306:3306"  # MySQL mặc định chạy ở cổng 3306
+    container_name: mysql
     environment:
-      MYSQL_ROOT_PASSWORD: Tuan01012001# Đặt mật khẩu root
-      MYSQL_DATABASE: english_learning_center # Tên database bạn muốn tạo
-      MYSQL_USER: app_user                    # Tùy chọn: tạo user riêng cho ứng dụng
-      MYSQL_PASSWORD: app_password            # Tùy chọn: mật khẩu cho user riêng
-    volumes:
-      - mysql_data:/var/lib/mysql  # Lưu dữ liệu MySQL để không mất khi container restart
+      MYSQL_ROOT_PASSWORD: Tuan01012001
+      MYSQL_DATABASE: english_learning_center
+      MYSQL_USER: app_user
+      MYSQL_PASSWORD: app_password
+    ports:
+      - "3307:3306"  # Cổng host 3307 ánh xạ tới cổng container 3306
     networks:
-      - app_network
+      - app-network
 
   app:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: spring_boot_app
+    container_name: spring_app
     ports:
-      - "8080:8080"  # Port ứng dụng Spring Boot
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/english_learning_center?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
-      SPRING_DATASOURCE_USERNAME: app_user
-      SPRING_DATASOURCE_PASSWORD: app_password
+      - "8080:8080"
     depends_on:
       - mysql
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/english_learning_center
+      - SPRING_DATASOURCE_USERNAME=app_user
+      - SPRING_DATASOURCE_PASSWORD=app_password
     networks:
-      - app_network
-
-volumes:
-  mysql_data:
+      - app-network
 
 networks:
-  app_network:
+  app-network:
